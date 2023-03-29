@@ -5,7 +5,12 @@ const router = express.Router();
 
 // Get current position for 
 router.get("/", (req, res) => {
-
+    console.log(`Someone tried to GET position`);
+    const coordinates = {
+        x: 100,
+        y: 204
+    }
+    res.json(coordinates)
 })
 
 // Update position

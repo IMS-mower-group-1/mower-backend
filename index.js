@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+const { initializeApp } = require("firebase/app")
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -18,17 +18,27 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
-const analytics = getAnalytics(firebaseApp);
 
 const express = require('express')
 const expressApp = express()
 
-import positionRouter from "./routes/position"
-import imageRouter from "./routes/image"
+const positionRouter = require("./routes/position")
+const imageRouter = require("./routes/image")
+
+// Add authentication token for requests using middleware!!
 
 expressApp.use("/position", positionRouter)
 expressApp.use("/image", imageRouter)
 
-expressApp.listen(3000, () => {
-  console.log(`Listening on port 3000...`);
+expressApp.get("/", (req, res) => {
+  res.send("Homepage")
+})
+
+
+const port = process.env.PORT || 3000
+
+console.log(`Attempting to listen on port ${port}!`);
+
+expressApp.listen(port, () => {
+  console.log(`Listening on port ${port}...`);
 })

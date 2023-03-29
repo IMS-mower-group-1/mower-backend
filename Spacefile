@@ -2,7 +2,7 @@
 v: 0
 micros:
   - name: TIGN13_Backend
-    src: .
+    src: ./
     engine: nodejs16
-    primary: true
-    run: npm run start
+    run: node index.js
+    dev: nodemon index.js
