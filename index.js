@@ -31,7 +31,7 @@ expressApp.use("/position", positionRouter)
 expressApp.use("/image", imageRouter)
 
 expressApp.get("/", (req, res) => {
-  res.send("Homepage")
+  res.send("TIGN13")
 })
 
 
