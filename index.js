@@ -1,5 +1,8 @@
-// Import the functions you need from the SDKs you need
-const { initializeApp } = require("firebase/app")
+import { initializeApp } from "firebase/app"
+import express from 'express'
+
+import positionRouter from "./routes/position.mjs"
+import imageRouter from "./routes/image.mjs"
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -19,11 +22,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 
-const express = require('express')
 const expressApp = express()
-
-const positionRouter = require("./routes/position")
-const imageRouter = require("./routes/image")
 
 // Add authentication token for requests using middleware!!
 
@@ -33,7 +32,6 @@ expressApp.use("/image", imageRouter)
 expressApp.get("/", (req, res) => {
   res.send("TIGN13")
 })
-
 
 const port = process.env.PORT || 3000
 
