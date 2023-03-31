@@ -2,6 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 import { ImageAnnotatorClient } from "@google-cloud/vision";
+import { collection, addDoc } from "firebase/firestore"; 
 
 import { fileURLToPath } from "url";
 import path from "path";
@@ -38,7 +39,7 @@ router.post("/upload/:mowerID", async (req, res) => {
   const newImageReference = ref(storage, `${dummyUserID}/${date}.jpg`);
 
   try {
-    await uploadBytes(newImageReference, uint8Array)
+    const uploadResult = await uploadBytes(newImageReference, uint8Array)
     console.log(`Uploaded Image!`);
 
     // 2. Perform Image Classification using Google API
@@ -58,9 +59,27 @@ router.post("/upload/:mowerID", async (req, res) => {
     };
 
     const results = await client.annotateImage(request)
-    console.log(results[0].localizedObjectAnnotations);
+    console.log(results[0].localizedObjectAnnotations[0].name);
 
     // 3. Add item to Firestore, connecting both image and annotations.
+    try {
+      console.log(req.db);
+      await addDoc(collection(req.db, "avoidedCollisions"), {
+        object: results[0].localizedObjectAnnotations[0].name,
+        objectDetectionAccuracy : results[0].localizedObjectAnnotations[0].score, 
+        imageLink: uploadResult.metadata.fullPath,
+        date: Date.now()
+      })
+
+      console.log(`uploaded doc!`);
+
+    } catch(e) {
+      console.log(`ERROR OCCUREED`);
+      console.log(e);
+    }
+
+
+    console.log(`FINISHED, STATUS : 200`);
 
     res.sendStatus(200);
 

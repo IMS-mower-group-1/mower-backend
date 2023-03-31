@@ -3,6 +3,7 @@ import express from 'express'
 
 import positionRouter from "./routes/position.mjs"
 import imageRouter from "./routes/image.mjs"
+import { getFirestore } from "firebase/firestore";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -22,10 +23,16 @@ const firebaseConfig = {
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 
+const db = getFirestore(firebaseApp)
+
 const expressApp = express()
 
 // Add authentication token for requests using middleware!!
 
+expressApp.use((req, res, next) => {
+  req.db = db
+  next()
+})
 expressApp.use("/position", positionRouter)
 expressApp.use("/image", imageRouter)
 
