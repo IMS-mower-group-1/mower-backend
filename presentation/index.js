@@ -1,8 +1,8 @@
 import { initializeApp } from "firebase/app"
 import express from 'express'
 
-import positionRouter from "./presentation/positionRouter.mjs"
-import imageRouter from "./presentation/imageRouter.mjs"
+import positionRouter from "./routers/positionRouter.mjs"
+import imageRouter from "./routers/imageRouter.mjs"
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries

@@ -1,0 +1,1 @@
+const awilix = require('awilix')
