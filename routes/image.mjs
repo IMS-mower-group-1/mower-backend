@@ -1,7 +1,9 @@
-import express from "express"
-import bodyParser from "body-parser"
-import { Blob } from 'fetch-blob'
-import { getStorage, ref, uploadBytes } from "firebase/storage"
+import express from "express";
+import bodyParser from "body-parser";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { ImageAnnotatorClient } from "@google-cloud/vision";
+
+const client = new ImageAnnotatorClient({keyFilename: '../config/tgin13-22678df230b0.json'});
 
 const router = express.Router();
 
@@ -12,29 +14,24 @@ router.get("/:id", (req, res) => {});
 
 // Upload image
 // Find out how IMAGE can be sent from Mower to API?
-router.post("/upload", (req, res) => {
+router.post("/upload/:mowerID", async (req, res) => {
   // 0. Upload to Firebase Storage
-  console.log(req.body);
-  const dummyUserID = "user1244346";
+  const dummyUserID = req.params.mowerID;
   const date = "2022-03-30_13:35:24";
   const storage = getStorage();
 
   const uint8Array = new Uint8Array(req.body);
-  const buffer = Buffer.from(uint8Array);
-  const blob = new Blob([buffer], { type: "application/octet-stream" });
 
-  const newImageReference = ref(storage, `${dummyUserID}/${date}`);
-  uploadBytes(newImageReference, blob)
+  const newImageReference = ref(storage, `${dummyUserID}/${date}.jpg`);
+  uploadBytes(newImageReference, uint8Array)
     .then((snapshot) => {
-      console.log(`Uploaded Blob!`);
+      console.log(`Uploaded Image!`);
       res.sendStatus(200);
     })
     .catch((e) => {
-      console.log(`Could not upload Blob...`);
+      console.log(`Could not upload Image...`);
       res.sendStatus(500);
     });
-
-  uploadBytes(newImageReference, req);
 
   // 1. Perform Image Classification using Google API
   // 2. Write Data to database.
