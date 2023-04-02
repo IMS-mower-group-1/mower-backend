@@ -1,4 +1,4 @@
-const express = require("express")
+import express from "express"
 const router = express.Router();
 
 // What is the data format for position? 
@@ -19,4 +19,4 @@ router.post("/update", (req, res) => {
     // 2. Replace Mower.position with new position.
 })
 
-module.exports = router;
+export default router
