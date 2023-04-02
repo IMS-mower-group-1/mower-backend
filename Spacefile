@@ -1,0 +1,8 @@
+# Spacefile Docs: https://go.deta.dev/docs/spacefile/v0
+v: 0
+micros:
+  - name: TIGN13_Backend
+    src: ./
+    engine: nodejs16
+    run: node index.js
+    dev: nodemon index.js
