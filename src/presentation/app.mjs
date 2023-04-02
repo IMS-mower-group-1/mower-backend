@@ -1,9 +1,6 @@
 import { initializeApp } from "firebase/app"
 import express from 'express'
 
-import positionRouter from "./routers/positionRouter.mjs"
-import imageRouter from "./routers/imageRouter.mjs"
-
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -24,19 +21,20 @@ const firebaseApp = initializeApp(firebaseConfig);
 
 const expressApp = express()
 
-// Add authentication token for requests using middleware!!
+export default function ({
+  positionRouter,
+  imageRouter
+}) {
 
-expressApp.use("/position", positionRouter)
-expressApp.use("/image", imageRouter)
+  // Add authentication token for requests using middleware!!
 
-expressApp.get("/", (req, res) => {
-  res.send("TIGN13")
-})
+  expressApp.use("/position", positionRouter)
+  expressApp.use("/image", imageRouter)
 
-const port = process.env.PORT || 3000
+  expressApp.get("/", (req, res) => {
+    res.send("TIGN13")
+  })
+  
+  return expressApp
+}
 
-console.log(`Attempting to listen on port ${port}!`);
-
-expressApp.listen(port, () => {
-  console.log(`Listening on port ${port}...`);
-})
