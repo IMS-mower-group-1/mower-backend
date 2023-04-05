@@ -1,6 +1,8 @@
 import { initializeApp } from "firebase/app"
 import express from 'express'
 
+import { getFirestore } from "firebase/firestore";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -19,12 +21,19 @@ const firebaseConfig = {
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 
+const db = getFirestore(firebaseApp)
+
 const expressApp = express()
 
 export default function ({
   positionRouter,
   imageRouter
 }) {
+
+  expressApp.use((req, res, next) => {
+    req.db = db
+    next()
+  })
 
   // Add authentication token for requests using middleware!!
 
