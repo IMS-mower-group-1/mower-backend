@@ -3,10 +3,10 @@ export default class MowSessionService{
         this.mowSessionRepository = mowSessionRepository
     }
 
-    getAllSessionsByMowerId(mowerId){
+    async getAllSessionsByMowerId(mowerId){
         // TODO: Validation
 
-        const sessions = this.mowSessionRepository.getAllSessionsByMowerId(mowerId)
+        const sessions = await this.mowSessionRepository.getAllSessionsByMowerId(mowerId)
 
         return sessions
 
