@@ -1,6 +1,6 @@
 export default class ImageRepository{
-    constructor(){
-        //TODO: Initialize database here (firebase?)
+    constructor({ db }){
+        this.db = db;
     }
 
     //TODO: Add data-access functions

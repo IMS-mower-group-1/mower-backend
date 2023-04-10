@@ -1,4 +1,6 @@
-import { createContainer, asFunction, asClass } from 'awilix'
+import { createContainer, asFunction, asClass, asValue } from 'awilix'
+
+import db from './firebase.mjs'
 
 import positionRouter from './presentation/routers/positionRouter.mjs'
 import positionService from './businessLogic/positionService.mjs'
@@ -30,7 +32,9 @@ container.register({
     // Mow session dependencies
     mowSessionRouter: asFunction(mowSessionRouter),
     mowSessionService: asClass(mowSessionService),
-    mowSessionRepository: asClass(mowSessionRepository)
+    mowSessionRepository: asClass(mowSessionRepository),
+
+    db: asValue(db)
 })
 
 export default container;
