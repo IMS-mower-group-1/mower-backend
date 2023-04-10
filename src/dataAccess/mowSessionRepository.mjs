@@ -6,14 +6,21 @@ export default class MowSessionRepository {
     }
 
     async getAllSessionsByMowerId(mowerId) {
-        const mower = collection(this.db, 'mower');
-        const snapshot = await getDocs(mower);
-        const mowers = [];
-    
-        snapshot.forEach((doc) => {
-          mowers.push({ id: doc.id, ...doc.data() });
+        // Get the specified mower document by its ID
+        const mowerRef = doc(this.db, 'mower', mowerId);
+
+        // Query the nested sessions collection
+        const sessionsCollection = collection(mowerRef, 'mowSession');
+        const sessionsSnapshot = await getDocs(sessionsCollection);
+        const sessions = [];
+
+        sessionsSnapshot.forEach((sessionDoc) => {
+            sessions.push({
+                id: sessionDoc.id,
+                ...sessionDoc.data(),
+            });
         });
-    
-        return mowers;
+
+        return sessions;
     }
 }
