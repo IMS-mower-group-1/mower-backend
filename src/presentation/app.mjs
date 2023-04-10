@@ -27,7 +27,8 @@ const expressApp = express()
 
 export default function ({
   positionRouter,
-  imageRouter
+  imageRouter,
+  mowSessionRouter
 }) {
 
   expressApp.use((req, res, next) => {
@@ -39,6 +40,7 @@ export default function ({
 
   expressApp.use("/position", positionRouter)
   expressApp.use("/image", imageRouter)
+  expressApp.use("/mow-session", mowSessionRouter)
 
   expressApp.get("/", (req, res) => {
     res.send("TIGN13")
