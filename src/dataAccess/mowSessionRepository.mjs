@@ -23,4 +23,8 @@ export default class MowSessionRepository {
 
         return sessions;
     }
+
+    async startMowSessionByMowerId(mowerId){
+        
+    }
 }

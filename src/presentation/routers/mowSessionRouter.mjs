@@ -11,7 +11,11 @@ export default function createMowSessionRouter({mowSessionService}) {
         const sessions = await mowSessionService.getAllSessionsByMowerId(mowerId)
         res.json(sessions)
     })
-    // TODO: add endpoints for mowing sessions
+
+    router.post("/start-session/:id", async (req, res) =>{
+        const mowerId = req.params.id
+        const sessionStarting = await mowSessionService.startMowSessionByMowerId(mowerId)
+    })
 
     return router
 }
