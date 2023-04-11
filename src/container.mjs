@@ -1,6 +1,7 @@
 import { createContainer, asFunction, asClass, asValue } from 'awilix'
 
 import db from './firebase.mjs'
+import imageAnnotatorClient from './imageAnnotatorClient.mjs'
 
 import positionRouter from './presentation/routers/positionRouter.mjs'
 import positionService from './businessLogic/positionService.mjs'
@@ -34,7 +35,8 @@ container.register({
     mowSessionService: asClass(mowSessionService),
     mowSessionRepository: asClass(mowSessionRepository),
 
-    db: asValue(db)
+    db: asValue(db),
+    imageAnnotatorClient: asValue(imageAnnotatorClient)
 })
 
 export default container;
