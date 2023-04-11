@@ -1,4 +1,5 @@
 import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { addDoc, doc, getDoc, collection } from "firebase/firestore"; 
 
 export default class ImageRepository {
     constructor({ db, imageAnnotatorClient }) {
@@ -13,7 +14,7 @@ export default class ImageRepository {
     
             try {
                 await uploadBytes(storageReference, uint8Array);
-                resolve();
+                resolve(imageFileName);
             } catch (e) {
                 console.error("ERROR - Could not upload image to Storage...", e);
                 reject(e);
@@ -31,6 +32,29 @@ export default class ImageRepository {
                 reject(e);
             }
         });
+    }
+
+    uploadAvoidedCollisionData(mowerID, mowSessionID, avoidedCollisionData) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                // 1. Fetch Reference to mower using MowerID
+                const mowerDocRef = doc(this.db, `mowers/${mowerID}`)
+                // const mowerDocSnap = await getDoc(mowerDocRef) 
+
+                // 2. Fetch Reference document using mowSessionID
+                const mowSessionDocRef = doc(mowerDocRef, `mowSessions/${mowSessionID}`)
+
+                // // 3. Fetch Reference to avoidedCollisions collections
+                const avoidedCollisionRef = collection(mowSessionDocRef, "avoidedCollisions")
+
+                // 3. Add document to avoidedCollisions!
+                await addDoc(avoidedCollisionRef, avoidedCollisionData)
+                resolve()
+            } catch (e) {
+                console.error("ERROR - Could not upload collisionData to Firestore")
+                reject(e)
+            }
+        })
     }
 
     //TODO: Add data-access functions

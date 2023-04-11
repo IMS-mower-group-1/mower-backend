@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 
-export default function createImageRouter({ imageService }) {
+export default function createImageRouter({ imageService, positionService }) {
     const router = express.Router();
     router.use(
         bodyParser.raw({ type: "application/octet-stream", limit: "10mb" })
@@ -12,27 +12,29 @@ export default function createImageRouter({ imageService }) {
 
     // Upload image
     // Find out how IMAGE can be sent from Mower to API?
-    router.post("/upload/:mowerID", async (req, res) => {
+    router.post("/upload/:mowerID/:mowSessionID", async (req, res) => {
         const uint8Array = new Uint8Array(req.body);
         const mowerID = req.params.mowerID;
-
+        const mowSessionID = req.params.mowSessionID;
+        
         try {
+            const currentMowerPosition = await positionService.getCoordinates(mowerID);
             const imageFilename = await imageService.uploadImageToStorage(mowerID, uint8Array);
             const imageAnnotations = await imageService.classifyImage(uint8Array);
-            console.log(`GOT IMAGE - containing : ${imageAnnotations[0].name}`);
-            // Upload object to Firestore : 
-            /*
-              {
-                id : 1,
-                position : Coordinate,
+
+            const avoidedCollisionData = {
+                accuracy: imageAnnotations[0].score,
+                avoidedObject: imageAnnotations[0].name,
                 imageLink : imageFilename,
-                avoidedObjectName: imageAnnotations[0].name
-              }
-            */  
+                position: currentMowerPosition
+            }
+            
+            await imageService.uploadAvoidedCollisionData(mowerID, mowSessionID, avoidedCollisionData)
+
             res.sendStatus(200);
         } catch (e) {
             console.error("ERROR - Collision avoidance image could not be uploaded...")
-            res.sendStatus(500);
+            res.sendStatus(400);
         }
     });
 
