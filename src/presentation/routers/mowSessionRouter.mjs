@@ -14,7 +14,11 @@ export default function createMowSessionRouter({mowSessionService}) {
             res.status(200).json(mowSessions)
         } catch (error) {
             console.error(error)
-            res.status(500).json({ error: error.message })
+            if(error instanceof ValidationError){
+                res.status(400).json({error: error.message})
+            } else {
+                res.status(500).json({error: error.message})
+            }
         }
     });
 
@@ -26,7 +30,11 @@ export default function createMowSessionRouter({mowSessionService}) {
             res.status(200).json(activeMowSession)
         } catch (error) {
             console.error(error)
-            res.status(500).json({ error: error.message })
+            if (error instanceof ValidationError) {
+                res.status(400).json({ error: error.message });
+            } else {
+                res.status(500).json({ error: 'An internal server error occurred.' });
+            }
         }
     });
 
@@ -37,7 +45,11 @@ export default function createMowSessionRouter({mowSessionService}) {
             res.status(201).json({ message: 'Mowing session started successfully', mowSessionId });
         } catch (error) {
             console.error(error)
-            res.status(500).json({ error: error.message });
+            if (error instanceof ValidationError) {
+                res.status(400).json({ error: error.message });
+            } else {
+                res.status(500).json({ error: 'An internal server error occurred.' });
+            }
         }
     });
 
@@ -48,7 +60,11 @@ export default function createMowSessionRouter({mowSessionService}) {
             res.status(200).json({ message: 'Mowing session ended successfully' });
         } catch (error) {
             console.error(error)
-            res.status(500).json({ error: error.message })
+            if (error instanceof ValidationError) {
+                res.status(400).json({ error: error.message });
+            } else {
+                res.status(500).json({ error: 'An internal server error occurred.' });
+            }
         }
     });
     return router

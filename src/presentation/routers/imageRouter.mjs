@@ -30,9 +30,13 @@ export default function createImageRouter({ imageService, positionService }) {
             await imageService.uploadAvoidedCollisionData(mowerID, mowSessionID, avoidedCollisionData)
 
             res.sendStatus(200);
-        } catch (e) {
-            console.error("ERROR - Collision avoidance image could not be uploaded...")
-            res.sendStatus(400);
+        } catch (error) {
+            console.error(error)
+            if (error instanceof ValidationError) {
+                res.status(400).json({ error: error.message });
+            } else {
+                res.status(500).json({ error: 'An internal server error occurred.' });
+            }
         }
     });
 

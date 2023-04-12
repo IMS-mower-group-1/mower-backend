@@ -9,9 +9,17 @@ export default function createPositionRouter({positionService}) {
     // Get current position for 
     router.get("/:mowerID", async (req, res) => {
         const mowerID = req.params.mowerID
-        console.log(`Someone tried to GET position mowerID : ${mowerID}`);
-        const coordinates = await positionService.getCoordinates(mowerID)
-        res.json(coordinates)
+        try{
+            const coordinates = await positionService.getCoordinates(mowerID)
+            res.json(coordinates)
+        } catch (error){
+            console.error(error)
+            if (error instanceof ValidationError) {
+                res.status(400).json({ error: error.message });
+            } else {
+                res.status(500).json({ error: 'An internal server error occurred.' });
+            }
+        }
     })
 
     // Update position
@@ -22,7 +30,12 @@ export default function createPositionRouter({positionService}) {
             await positionService.updatePosition(mowerId, currentPostition)
             res.status(200).json({ message: "Position updated & added to the mowing session path" });
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            console.error(error)
+            if (error instanceof ValidationError) {
+                res.status(400).json({ error: error.message });
+            } else {
+                res.status(500).json({ error: 'An internal server error occurred.' });
+            }
         }
     })
 
