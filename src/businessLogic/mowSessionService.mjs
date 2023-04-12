@@ -18,11 +18,25 @@ export default class MowSessionService{
         const sessionData = {
             path: [],
             start: formattedDate,
-            end: ''
+            end: null
         }
-        await this.mowSessionRepository.startMowSessionByMowerId(mowerId, sessionData)
+        return await this.mowSessionRepository.startMowSessionByMowerId(mowerId, sessionData);
     }
 
+    async endMowSessionByMowerId(mowerId) {
 
+        const currentDate = new Date();
+        const formattedCurrentDate = currentDate.toISOString().slice(0, 10);
+        
+        // Get the active mow-session
+        const activeSession = await this.mowSessionRepository.getActiveSession(mowerId);
+    
+        if (!activeSession) {
+            return;
+        }
+    
+        // Update the end field of the active session with currentDate
+        await this.mowSessionRepository.endMowSession(mowerId, activeSession.id, formattedCurrentDate);
+    }
     //TODO: Add business-logic for mow sessions
 }

@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, doc, getDoc, addDoc, getDocs, updateDoc, query, where } from 'firebase/firestore';
 
 export default class MowSessionRepository {
     constructor({ db }) {
@@ -6,12 +6,8 @@ export default class MowSessionRepository {
     }
 
     async getAllSessionsByMowerId(mowerId) {
-        // Get the specified mower document by its ID
-        const mowerRef = doc(this.db, `mowers/${mowerId}`);
-
-        // Query the nested sessions collection
-        const sessionsCollection = collection(mowerRef, 'mowSessions');
-        const sessionsSnapshot = await getDocs(sessionsCollection);
+        const sessionsCollectionRef = collection(this.db, `mowers/${mowerId}/mowSessions`);
+        const sessionsSnapshot = await getDocs(sessionsCollectionRef);
         const sessions = [];
 
         sessionsSnapshot.forEach((sessionDoc) => {
@@ -31,10 +27,26 @@ export default class MowSessionRepository {
         // Add a new document to the nested sessions collection
         const sessionsCollection = collection(mowerRef, 'mowSessions');
         const newSessionRef = await addDoc(sessionsCollection, sessionData);
-        
-        // Create an empty subcollection called 'avoidedCollisions' within the session
-        collection(newSessionRef, 'avoidedCollisions');
+        return newSessionRef.id;
+    }
 
-        console.log(`New session added with ID: ${newSessionRef.id}`);
+    async endMowSession(mowerId, sessionId, endDate) {
+        const sessionDocRef = doc(this.db, `mowers/${mowerId}/mowSessions/${sessionId}`);
+        await updateDoc(sessionDocRef, { end: endDate });
+    }
+
+    async getActiveSession(mowerId) {
+        const sessionsCollectionRef = collection(this.db, `mowers/${mowerId}/mowSessions`);
+        const activeSessionQuery = query(sessionsCollectionRef, where('end', '==', null));
+        const activeSessionSnapshot = await getDocs(activeSessionQuery);
+    
+        if (activeSessionSnapshot.empty) {
+            return null;
+        }
+    
+        return {
+            id: activeSessionSnapshot.docs[0].id,
+            ...activeSessionSnapshot.docs[0].data(),
+        };
     }
 }
