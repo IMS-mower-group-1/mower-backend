@@ -21,7 +21,7 @@ export default function createPositionRouter({positionService}) {
             await positionService.updatePosition(mowerId, currentPostition)
             res.status(200).json({ message: "Position updated & added to the mowing session path" });
         } catch (error) {
-            res.status(500).json({ error: "Internal server error" });
+            res.status(500).json({ error: error.message });
         }
     })
 

@@ -13,7 +13,7 @@ export default function createMowSessionRouter({mowSessionService}) {
             res.status(200).json(mowSessions)
         } catch (error) {
             console.error(error)
-            res.status(500).json({ error: 'Internal server error' })
+            res.status(500).json({ error: error.message })
         }
     });
 
@@ -25,7 +25,7 @@ export default function createMowSessionRouter({mowSessionService}) {
             res.status(200).json(activeMowSession)
         } catch (error) {
             console.error(error)
-            res.status(500).json({ error: 'Internal server error' })
+            res.status(500).json({ error: error.message })
         }
     });
 
@@ -36,7 +36,7 @@ export default function createMowSessionRouter({mowSessionService}) {
             res.status(201).json({ message: 'Mowing session started successfully', mowSessionId });
         } catch (error) {
             console.error(error)
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).json({ error: error.message });
         }
     });
 
@@ -47,7 +47,7 @@ export default function createMowSessionRouter({mowSessionService}) {
             res.status(200).json({ message: 'Mowing session ended successfully' });
         } catch (error) {
             console.error(error)
-            res.status(500).json({ error: 'Internal server error' })
+            res.status(500).json({ error: error.message })
         }
     });
     return router
