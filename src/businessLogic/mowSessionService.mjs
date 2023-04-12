@@ -13,7 +13,14 @@ export default class MowSessionService{
     }
 
     async startMowSessionByMowerId(mowerId){
-        await this.mowSessionRepository.startMowSessionByMowerId(mowerId)
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString().slice(0, 10);
+        const sessionData = {
+            path: [],
+            start: formattedDate,
+            end: ''
+        }
+        await this.mowSessionRepository.startMowSessionByMowerId(mowerId, sessionData)
     }
 
 
