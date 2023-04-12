@@ -6,9 +6,10 @@ export default function createPositionRouter({positionService}) {
     // What is the data format for position? 
 
     // Get current position for 
-    router.get("/", (req, res) => {
-        console.log(`Someone tried to GET position`);
-        const coordinates = positionService.getCoordinates()
+    router.get("/:mowerID", async (req, res) => {
+        const mowerID = req.params.mowerID
+        console.log(`Someone tried to GET position mowerID : ${mowerID}`);
+        const coordinates = await positionService.getCoordinates(mowerID)
         res.json(coordinates)
     })
 

@@ -7,16 +7,13 @@ export default function createImageRouter({ imageService, positionService }) {
         bodyParser.raw({ type: "application/octet-stream", limit: "10mb" })
     );
 
-    // Get image data
-    router.get("/:id", (req, res) => {});
-
     // Upload image
     // Find out how IMAGE can be sent from Mower to API?
     router.post("/upload/:mowerID/:mowSessionID", async (req, res) => {
         const uint8Array = new Uint8Array(req.body);
         const mowerID = req.params.mowerID;
         const mowSessionID = req.params.mowSessionID;
-        
+
         try {
             const currentMowerPosition = await positionService.getCoordinates(mowerID);
             const imageFilename = await imageService.uploadImageToStorage(mowerID, uint8Array);
@@ -28,7 +25,7 @@ export default function createImageRouter({ imageService, positionService }) {
                 imageLink : imageFilename,
                 position: currentMowerPosition
             }
-            
+
             await imageService.uploadAvoidedCollisionData(mowerID, mowSessionID, avoidedCollisionData)
 
             res.sendStatus(200);
@@ -36,6 +33,12 @@ export default function createImageRouter({ imageService, positionService }) {
             console.error("ERROR - Collision avoidance image could not be uploaded...")
             res.sendStatus(400);
         }
+    });
+
+    // Get image data
+    router.get("/", (req, res) => {
+        console.log(`Test ran`);
+        res.send(200);
     });
 
     return router;
