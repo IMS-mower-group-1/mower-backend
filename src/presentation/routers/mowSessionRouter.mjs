@@ -9,9 +9,10 @@ export default function createMowSessionRouter({mowSessionService}) {
     router.get("/mower/:id", async (req, res) => {
         const mowerId = req.params.id 
         try {
-            const sessions = await mowSessionService.getAllSessionsByMowerId(mowerId)
-            res.status(200).json(sessions)
+            const mowSessions = await mowSessionService.getAllMowSessionsByMowerId(mowerId)
+            res.status(200).json(mowSessions)
         } catch (error) {
+            console.error(error)
             res.status(500).json({ error: 'Internal server error' })
         }
     });
@@ -20,9 +21,10 @@ export default function createMowSessionRouter({mowSessionService}) {
     router.get("/mower/:id/active", async (req, res) => {
         const mowerId = req.params.id 
         try {
-            const activeSession = await mowSessionService.getActiveSessionByMowerId(mowerId)
-            res.status(200).json(activeSession)
+            const activeMowSession = await mowSessionService.getActiveMowSessionByMowerId(mowerId)
+            res.status(200).json(activeMowSession)
         } catch (error) {
+            console.error(error)
             res.status(500).json({ error: 'Internal server error' })
         }
     });
@@ -30,9 +32,10 @@ export default function createMowSessionRouter({mowSessionService}) {
     router.post("/start-session/:id", async (req, res) => {
         const mowerId = req.params.id;
         try {
-            const sessionId = await mowSessionService.startMowSessionByMowerId(mowerId);
-            res.status(201).json({ message: 'Mowing session started successfully', sessionId });
+            const mowSessionId = await mowSessionService.startMowSessionByMowerId(mowerId);
+            res.status(201).json({ message: 'Mowing session started successfully', mowSessionId });
         } catch (error) {
+            console.error(error)
             res.status(500).json({ error: 'Internal server error' });
         }
     });
@@ -43,9 +46,9 @@ export default function createMowSessionRouter({mowSessionService}) {
             await mowSessionService.endMowSessionByMowerId(mowerId)
             res.status(200).json({ message: 'Mowing session ended successfully' });
         } catch (error) {
+            console.error(error)
             res.status(500).json({ error: 'Internal server error' })
         }
     });
-
     return router
 }

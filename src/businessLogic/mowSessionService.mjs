@@ -3,14 +3,14 @@ export default class MowSessionService{
         this.mowSessionRepository = mowSessionRepository
     }
 
-    async getAllSessionsByMowerId(mowerId){
-        const mowSessions = await this.mowSessionRepository.getAllSessionsByMowerId(mowerId)
+    async getAllMowSessionsByMowerId(mowerId){
+        const mowSessions = await this.mowSessionRepository.getAllMowSessionsByMowerId(mowerId)
         return mowSessions
 
     }
 
-    async getActiveSessionByMowerId(mowerId){
-        const activeMowSession = await this.mowSessionRepository.getActiveSession(mowerId)
+    async getActiveMowSessionByMowerId(mowerId){
+        const activeMowSession = await this.mowSessionRepository.getActiveMowSession(mowerId)
         return activeMowSession
 
     }
@@ -18,12 +18,12 @@ export default class MowSessionService{
     async startMowSessionByMowerId(mowerId){
         const currentDate = new Date();
         const formattedDate = currentDate.toISOString().slice(0, 10);
-        const sessionData = {
+        const mowSessionData = {
             path: [],
             start: formattedDate,
             end: null
         }
-        return await this.mowSessionRepository.startMowSessionByMowerId(mowerId, sessionData);
+        return await this.mowSessionRepository.startMowSessionByMowerId(mowerId, mowSessionData);
     }
 
     async endMowSessionByMowerId(mowerId) {
@@ -31,10 +31,10 @@ export default class MowSessionService{
         const formattedCurrentDate = currentDate.toISOString().slice(0, 10);
         
         // Get the active mow-session
-        const activeMowSession = await this.mowSessionRepository.getActiveSession(mowerId);
+        const activeMowSession = await this.mowSessionRepository.getActiveMowSession(mowerId);
     
         if (!activeMowSession) {
-            console.log("No active mowing session found.");
+            console.log("No active mow session found.");
             return;
         }
     
@@ -44,7 +44,7 @@ export default class MowSessionService{
 
     async updateMowSessionPath(mowerId, currentPosition) {
         // Get the active mow-session
-        const activeMowSession = await this.mowSessionRepository.getActiveSession(mowerId);
+        const activeMowSession = await this.mowSessionRepository.getActiveMowSession(mowerId);
     
         if (!activeMowSession) {
             console.log("No active mowing session found.");
