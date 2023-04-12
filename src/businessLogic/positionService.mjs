@@ -21,5 +21,7 @@ export default class PositionService{
         await this.mowSessionService.updateMowSessionPath(mowerId, position)
 
         // TODO: Update mower position
+        await this.positionRepository.updateCoordinates(mowerId, position)
+
     }
 }

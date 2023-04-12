@@ -1,4 +1,4 @@
-import { getDoc, doc } from "firebase/firestore";
+import { updateDoc, getDoc, doc } from "firebase/firestore";
 
 export default class PositionRepository{
     constructor({ db }){
@@ -16,8 +16,11 @@ export default class PositionRepository{
                 console.error("ERROR Repository - Could not fetch coordinates for mower with id " + mowerID)
                 reject(e) 
             }
-
-
         })
+    }
+    
+    async updateCoordinates(mowerID, newPosition) {
+        const mowerDocRef = doc(this.db, `mowers/${mowerID}`)
+        await updateDoc(mowerDocRef, { position: newPosition });
     }
 }
