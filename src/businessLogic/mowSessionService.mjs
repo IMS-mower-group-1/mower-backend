@@ -18,7 +18,7 @@ export default class MowSessionService{
     async startMowSessionByMowerId(mowerId){
         const activeMowSession = await this.mowSessionRepository.getActiveMowSession(mowerId)
         if (activeMowSession) {
-            throw new Error('Cannot start a new mow session when an active session exists.');
+            throw new ValidationError('Cannot start a new mow session when an active session exists.');
         }
 
         const currentDate = new Date();
@@ -39,9 +39,8 @@ export default class MowSessionService{
         const activeMowSession = await this.mowSessionRepository.getActiveMowSession(mowerId);
     
         if (!activeMowSession) {
-            throw new Error('Cannot end a mow session when there is no active session.');
+            throw new ValidationError('Cannot end a mow session when there is no active session.');
         }
-    
         // Update the end field of the active session with currentDate
         await this.mowSessionRepository.endMowSession(mowerId, activeMowSession.id, formattedCurrentDate);
     }
@@ -51,7 +50,7 @@ export default class MowSessionService{
         const activeMowSession = await this.mowSessionRepository.getActiveMowSession(mowerId);
     
         if (!activeMowSession) {
-            throw new Error('Cannot update path when there is no active session');
+            throw new ValidationError('Cannot update path when there is no active session');
         }
         // Append currentPosition to the path
         const newPath = activeMowSession.path ? [...activeMowSession.path, currentPosition] : [currentPosition];

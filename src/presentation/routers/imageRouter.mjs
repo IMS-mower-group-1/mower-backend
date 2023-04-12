@@ -1,6 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
-import { ValidationError, InternalServerError } from '../../utils/errors.mjs';
+import { ValidationError } from '../../utils/errors.mjs';
 
 export default function createImageRouter({ imageService, positionService }) {
     const router = express.Router();

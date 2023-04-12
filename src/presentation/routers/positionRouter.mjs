@@ -1,5 +1,5 @@
 import express from "express"
-import { ValidationError, InternalServerError } from '../../utils/errors.mjs';
+import { ValidationError } from '../../utils/errors.mjs';
 
 export default function createPositionRouter({positionService}) {
 

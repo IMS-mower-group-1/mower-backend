@@ -1,5 +1,5 @@
 import express from "express"
-import { ValidationError, InternalServerError } from '../../utils/errors.mjs';
+import { ValidationError } from '../../utils/errors.mjs';
 
 export default function createMowSessionRouter({mowSessionService}) {
 
@@ -17,7 +17,7 @@ export default function createMowSessionRouter({mowSessionService}) {
             if(error instanceof ValidationError){
                 res.status(400).json({error: error.message})
             } else {
-                res.status(500).json({error: error.message})
+                res.status(500).json({error: 'An internal server error occurred.'})
             }
         }
     });
