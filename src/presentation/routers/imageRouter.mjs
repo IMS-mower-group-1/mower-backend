@@ -10,7 +10,7 @@ export default function createImageRouter({ imageService, positionService }) {
 
     // Upload image
     // Find out how IMAGE can be sent from Mower to API?
-    router.post("/upload/:mowerID/:mowSessionID", async (req, res) => {
+    router.post("/upload/:mowerID/:mowSessionID", async (req, res, next) => {
         const uint8Array = new Uint8Array(req.body);
         const mowerID = req.params.mowerID;
         const mowSessionID = req.params.mowSessionID;

@@ -12,16 +12,12 @@ export default class PositionService{
         return mower == null ? false : true
     }
 
-    async getCoordinates(mowerID) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const coordinates = this.positionRepository.getCoordinates(mowerID)
-                resolve(coordinates)
-            } catch (e) {
-                console.error("ERROR Service - Could not fetch coordinates for mower with id : " + mowerID)
-                reject(e)
-            }
-        })
+    async getCoordinates(mowerId) {
+        const mowerExists = await this.mowerExists(mowerId)
+        if(!mowerExists){
+            throw new ValidationError("The mower does not exist")
+        } 
+        return await this.positionRepository.getCoordinates(mowerId)
     }
 
     async updatePosition(mowerId, position){

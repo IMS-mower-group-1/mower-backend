@@ -5,20 +5,11 @@ export default class PositionRepository{
         this.db = db;
     }
 
-    //TODO: Add data-access functions
     async getCoordinates(mowerID) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const mowerDocRef = doc(this.db, `mowers/${mowerID}`)
-                const mowerDocSnap = await getDoc(mowerDocRef)
-                resolve(mowerDocSnap.data().position)
-            } catch (e) {
-                console.error("ERROR Repository - Could not fetch coordinates for mower with id " + mowerID)
-                reject(e) 
-            }
-        })
+        const mowerDocRef = doc(this.db, `mowers/${mowerID}`)
+        const mowerDocSnap = await getDoc(mowerDocRef)
+        return(mowerDocSnap.data().position)
     }
-
 
     async updateCoordinates(mowerID, newPosition) {
         const mowerDocRef = doc(this.db, `mowers/${mowerID}`)

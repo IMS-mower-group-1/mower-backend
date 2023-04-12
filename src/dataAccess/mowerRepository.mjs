@@ -6,21 +6,16 @@ export default class MowerRepository {
     }
 
     async getMowerById(mowerId){
-        try{
-            const mowerDocRef = doc(this.db, `mowers/${mowerId}`);
-            const mowerDocSnap = await getDoc(mowerDocRef);
+        const mowerDocRef = doc(this.db, `mowers/${mowerId}`);
+        const mowerDocSnap = await getDoc(mowerDocRef);
 
-            if(mowerDocSnap.exists()){
-                return {
-                    id: mowerDocSnap.id,
-                    ...mowerDocSnap.data(),
-                }
-            } else {
-                return null
+        if(mowerDocSnap.exists()){
+            return {
+                id: mowerDocSnap.id,
+                ...mowerDocSnap.data(),
             }
-        } catch (error) {
-            console.error(`ERROR Repository - Could not fetch mower with id ${mowerId}`);
-            throw new Error("Error fetching mower")
+        } else {
+            return null
         }
     }
 }
