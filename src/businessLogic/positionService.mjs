@@ -1,11 +1,25 @@
 export default class PositionService{
-    constructor({positionRepository}){
+    constructor({positionRepository, mowSessionService}){
         this.positionRepository = positionRepository
+        this.mowSessionService = mowSessionService
     }
 
-    getCoordinates(){
-        const coordinates = this.positionRepository.getCoordinates()
-        return coordinates
+    async getCoordinates(mowerID) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const coordinates = this.positionRepository.getCoordinates(mowerID)
+                resolve(coordinates)
+            } catch (e) {
+                console.error("ERROR Service - Could not fetch coordinates for mower with id : " + mowerID)
+                reject(e)
+            }
+        })
     }
-    //TODO: Add business-logic
+
+    async updatePosition(mowerId, position){
+        // Updates Mowing session path
+        await this.mowSessionService.updateMowSessionPath(mowerId, position)
+
+        // TODO: Update mower position
+    }
 }

@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "config",
+			"path": "../../../Desktop/TIGN13_Backend/config"
+		},
+		{
+			"name": "mower-backend",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}

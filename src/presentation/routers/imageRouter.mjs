@@ -1,77 +1,45 @@
 import express from "express";
 import bodyParser from "body-parser";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
-import { ImageAnnotatorClient } from "@google-cloud/vision";
 
-import { fileURLToPath } from "url";
-import path from "path";
+export default function createImageRouter({ imageService, positionService }) {
+    const router = express.Router();
+    router.use(
+        bodyParser.raw({ type: "application/octet-stream", limit: "10mb" })
+    );
 
-// Get the current module's file path
-const __filename = fileURLToPath(import.meta.url);
+    // Upload image
+    // Find out how IMAGE can be sent from Mower to API?
+    router.post("/upload/:mowerID/:mowSessionID", async (req, res) => {
+        const uint8Array = new Uint8Array(req.body);
+        const mowerID = req.params.mowerID;
+        const mowSessionID = req.params.mowSessionID;
 
-// Get the current module's directory path
-const __dirname = path.dirname(__filename);
+        try {
+            const currentMowerPosition = await positionService.getCoordinates(mowerID);
+            const imageFilename = await imageService.uploadImageToStorage(mowerID, uint8Array);
+            const imageAnnotations = await imageService.classifyImage(uint8Array);
 
-console.log(__dirname);
+            const avoidedCollisionData = {
+                accuracy: imageAnnotations[0].score,
+                avoidedObject: imageAnnotations[0].name,
+                imageLink : imageFilename,
+                position: currentMowerPosition
+            }
 
-export default function createImageRouter({imageService}){
-  
-  const client = new ImageAnnotatorClient({
-    keyFilename: __dirname + "/../config/tgin13-22678df230b0.json",
-  });
+            await imageService.uploadAvoidedCollisionData(mowerID, mowSessionID, avoidedCollisionData)
 
-  const router = express.Router();
+            res.sendStatus(200);
+        } catch (e) {
+            console.error("ERROR - Collision avoidance image could not be uploaded...")
+            res.sendStatus(400);
+        }
+    });
 
-  router.use(bodyParser.raw({ type: "application/octet-stream", limit: "10mb" }));
+    // Get image data
+    router.get("/", (req, res) => {
+        console.log(`Test ran`);
+        res.send(200);
+    });
 
-  // Get image data
-  router.get("/:id", (req, res) => {});
-
-  // Upload image
-  // Find out how IMAGE can be sent from Mower to API?
-  router.post("/upload/:mowerID", async (req, res) => {
-    // 1. Upload to Firebase Storage
-    const dummyUserID = req.params.mowerID;
-    const date = "2022-03-30_13:35:24";
-    const storage = getStorage();
-
-    const uint8Array = new Uint8Array(req.body);
-
-    const newImageReference = ref(storage, `${dummyUserID}/${date}.jpg`);
-
-    try {
-      await uploadBytes(newImageReference, uint8Array)
-      console.log(`Uploaded Image!`);
-
-      // 2. Perform Image Classification using Google API
-
-      const features = [
-        {
-          type: "OBJECT_LOCALIZATION",
-          maxResults: 1,
-        },
-      ];
-
-      const request = {
-        image: {
-          content: Buffer.from(uint8Array).toString("base64"),
-        },
-        features: features,
-      };
-
-      const results = await client.annotateImage(request)
-      console.log(results[0].localizedObjectAnnotations);
-
-      // 3. Add item to Firestore, connecting both image and annotations.
-
-      res.sendStatus(200);
-
-    } catch {
-      res.sendStatus(500);
-    }
-  });
-
-  return router
-
+    return router;
 }
-
