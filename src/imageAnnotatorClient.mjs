@@ -13,6 +13,4 @@ const imageAnnotatorClient = new ImageAnnotatorClient({
     keyFilename: __dirname + "/../config/tgin13-22678df230b0.json",
 });
 
-console.log(`RAN imageAnnotatorClient.mjs`);
-
 export default imageAnnotatorClient;
