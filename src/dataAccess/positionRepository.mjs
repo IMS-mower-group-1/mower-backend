@@ -20,4 +20,8 @@ export default class PositionRepository{
 
         })
     }
+    async updateCoordinates(mowerID, newPosition) {
+        const mowerDocRef = doc(this.db, `mowers/${mowerID}`)
+        await updateDoc(mowerDocRef, { position: newPosition });
+    }
 }
