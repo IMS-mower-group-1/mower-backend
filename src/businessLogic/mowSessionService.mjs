@@ -1,4 +1,5 @@
 import { ValidationError } from '../utils/errors.mjs';
+import { formatDate } from '../utils/dateFormatter.mjs';
 
 export default class MowSessionService{
     constructor({mowSessionRepository, mowerRepository}){
@@ -41,10 +42,10 @@ export default class MowSessionService{
         }
 
         const currentDate = new Date();
-        const formattedDate = currentDate.toISOString().slice(0, 10);
+        const formattedCurrentDate = formatDate(currentDate)
         const mowSessionData = {
             path: [],
-            start: formattedDate,
+            start: formattedCurrentDate,
             end: null
         }
         return await this.mowSessionRepository.startMowSessionByMowerId(mowerId, mowSessionData);
@@ -52,7 +53,7 @@ export default class MowSessionService{
 
     async endMowSessionByMowerId(mowerId) {
         const currentDate = new Date();
-        const formattedCurrentDate = currentDate.toISOString().slice(0, 10);
+        const formattedCurrentDate = formatDate(currentDate)
         
         const activeMowSession = await this.mowSessionRepository.getActiveMowSession(mowerId);
         const mowerExists = await this.mowerExists(mowerId)
@@ -82,5 +83,5 @@ export default class MowSessionService{
     
         // Update the mow session path in the repository
         await this.mowSessionRepository.updateMowSessionPath(mowerId, activeMowSession.id, newPath);
-    }
+    }      
 }

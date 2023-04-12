@@ -1,4 +1,5 @@
 import { ValidationError } from '../utils/errors.mjs';
+import { formatDate } from '../utils/dateFormatter.mjs';
 
 export default class ImageService {
     constructor({ imageRepository }) {
@@ -8,19 +9,8 @@ export default class ImageService {
     uploadImageToStorage(mowerID, imageUInt8Array) {
         return new Promise(async (resolve, reject) => {
             const currentDate = new Date();
-
-            // Extract the individual components of the date and time
-            const year = currentDate.getFullYear();
-            const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-            const day = String(currentDate.getDate()).padStart(2, "0");
-            const hours = String(currentDate.getHours()).padStart(2, "0");
-            const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-            const seconds = String(currentDate.getSeconds()).padStart(2, "0");
-
-            // Format the date and time string
-            const formattedDateTime = `${year}-${month}-${day}_${hours}:${minutes}:${seconds}`;
+            const formattedDateTime = formatDate(currentDate)
             const imageFilename = `${mowerID}/${formattedDateTime}.jpg`;
-
             try {
                 const fileName =
                     await this.imageRepository.uploadImageToStorage(
