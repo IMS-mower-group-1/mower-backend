@@ -1,6 +1,7 @@
 export default class PositionService{
-    constructor({positionRepository}){
+    constructor({positionRepository, mowSessionService}){
         this.positionRepository = positionRepository
+        this.mowSessionService = mowSessionService
     }
 
     async getCoordinates(mowerID) {
@@ -14,5 +15,11 @@ export default class PositionService{
             }
         })
     }
-    //TODO: Add business-logic
+
+    async updatePosition(mowerId, position){
+        // Updates Mowing session path
+        await this.mowSessionService.updateMowSessionPath(mowerId, position)
+
+        // TODO: Update mower position
+    }
 }

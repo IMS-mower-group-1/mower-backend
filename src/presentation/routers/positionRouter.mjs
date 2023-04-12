@@ -13,9 +13,15 @@ export default function createPositionRouter({positionService}) {
     })
 
     // Update position
-    router.post("/update", (req, res) => {
-        // 1. Store previous position in MowSession.path
-        // 2. Replace Mower.position with new position.
+    router.post("/update/:id", async(req, res) => {
+        const mowerId = req.params.id
+        const currentPostition = req.body.position 
+        try {
+            await positionService.updatePosition(mowerId, currentPostition)
+            res.status(200).json({ message: "Position updated & added to the mowing session path" });
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
     })
 
     return router

@@ -4,8 +4,6 @@ export default class MowSessionService{
     }
 
     async getAllSessionsByMowerId(mowerId){
-        // TODO: Validation
-
         const sessions = await this.mowSessionRepository.getAllSessionsByMowerId(mowerId)
 
         return sessions
@@ -24,19 +22,35 @@ export default class MowSessionService{
     }
 
     async endMowSessionByMowerId(mowerId) {
-
         const currentDate = new Date();
         const formattedCurrentDate = currentDate.toISOString().slice(0, 10);
         
         // Get the active mow-session
-        const activeSession = await this.mowSessionRepository.getActiveSession(mowerId);
+        const activeMowSession = await this.mowSessionRepository.getActiveSession(mowerId);
     
-        if (!activeSession) {
+        if (!activeMowSession) {
+            console.log("No active mowing session found.");
             return;
         }
     
         // Update the end field of the active session with currentDate
-        await this.mowSessionRepository.endMowSession(mowerId, activeSession.id, formattedCurrentDate);
+        await this.mowSessionRepository.endMowSession(mowerId, activeMowSession.id, formattedCurrentDate);
     }
+
+    async updateMowSessionPath(mowerId, currentPosition) {
+        // Get the active mow-session
+        const activeMowSession = await this.mowSessionRepository.getActiveSession(mowerId);
+    
+        if (!activeMowSession) {
+            console.log("No active mowing session found.");
+            return;
+        }
+        // Append currentPosition to the path
+        const newPath = activeMowSession.path ? [...activeMowSession.path, currentPosition] : [currentPosition];
+    
+        // Update the mow session path in the repository
+        await this.mowSessionRepository.updateMowSessionPath(mowerId, activeMowSession.id, newPath);
+    }
+
     //TODO: Add business-logic for mow sessions
 }
