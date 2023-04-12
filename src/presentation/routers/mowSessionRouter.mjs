@@ -16,6 +16,17 @@ export default function createMowSessionRouter({mowSessionService}) {
         }
     });
 
+    // Get active mow session by mower-id
+    router.get("/mower/:id/active", async (req, res) => {
+        const mowerId = req.params.id 
+        try {
+            const activeSession = await mowSessionService.getActiveSessionByMowerId(mowerId)
+            res.status(200).json(activeSession)
+        } catch (error) {
+            res.status(500).json({ error: 'Internal server error' })
+        }
+    });
+
     router.post("/start-session/:id", async (req, res) => {
         const mowerId = req.params.id;
         try {

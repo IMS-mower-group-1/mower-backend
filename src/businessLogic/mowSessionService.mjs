@@ -4,9 +4,14 @@ export default class MowSessionService{
     }
 
     async getAllSessionsByMowerId(mowerId){
-        const sessions = await this.mowSessionRepository.getAllSessionsByMowerId(mowerId)
+        const mowSessions = await this.mowSessionRepository.getAllSessionsByMowerId(mowerId)
+        return mowSessions
 
-        return sessions
+    }
+
+    async getActiveSessionByMowerId(mowerId){
+        const activeMowSession = await this.mowSessionRepository.getActiveSession(mowerId)
+        return activeMowSession
 
     }
 
