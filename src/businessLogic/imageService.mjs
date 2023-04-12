@@ -1,3 +1,5 @@
+import { ValidationError, InternalServerError } from '../utils/errors.mjs';
+
 export default class ImageService {
     constructor({ imageRepository }) {
         this.imageRepository = imageRepository;
