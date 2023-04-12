@@ -1,6 +1,5 @@
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 import { addDoc, doc, getDoc, collection } from "firebase/firestore"; 
-import { ValidationError } from '../utils/errors.mjs';
 
 export default class ImageRepository {
     constructor({ db, imageAnnotatorClient }) {
