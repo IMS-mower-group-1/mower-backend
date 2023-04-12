@@ -31,12 +31,7 @@ export default function createImageRouter({ imageService, positionService }) {
 
             res.sendStatus(200);
         } catch (error) {
-            console.error(error)
-            if (error instanceof ValidationError) {
-                res.status(400).json({ error: error.message });
-            } else {
-                res.status(500).json({ error: 'An internal server error occurred.' });
-            }
+            next(error)
         }
     });
 
