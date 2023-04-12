@@ -37,12 +37,8 @@ export default class ImageRepository {
     uploadAvoidedCollisionData(mowerID, mowSessionID, avoidedCollisionData) {
         return new Promise(async (resolve, reject) => {
             try {
-                // 1. Fetch Reference to mower using MowerID
-                const mowerDocRef = doc(this.db, `mowers/${mowerID}`)
-                // const mowerDocSnap = await getDoc(mowerDocRef) 
-
-                // 2. Fetch Reference document using mowSessionID
-                const mowSessionDocRef = doc(mowerDocRef, `mowSessions/${mowSessionID}`)
+                // 2. Fetch mowSession document reference using mowerID & mowSessionID
+                const mowSessionDocRef = doc(this.db, `mowers/${mowerID}/mowSessions/${mowSessionID}`)
 
                 // // 3. Fetch Reference to avoidedCollisions collections
                 const avoidedCollisionRef = collection(mowSessionDocRef, "avoidedCollisions")
