@@ -1,5 +1,4 @@
 import express from "express"
-import { ValidationError } from '../../utils/errors.mjs';
 
 export default function createPositionRouter({positionService}) {
 
@@ -11,7 +10,7 @@ export default function createPositionRouter({positionService}) {
         const mowerID = req.params.mowerID
         try{
             const coordinates = await positionService.getCoordinates(mowerID)
-            res.json(coordinates)
+            res.status(200).json(coordinates)
         } catch (error) {
             next(error)
         }

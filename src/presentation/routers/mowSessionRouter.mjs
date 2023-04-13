@@ -1,5 +1,4 @@
 import express from "express"
-import { ValidationError } from '../../utils/errors.mjs';
 
 export default function createMowSessionRouter({mowSessionService}) {
 
