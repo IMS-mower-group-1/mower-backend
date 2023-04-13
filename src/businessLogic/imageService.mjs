@@ -2,9 +2,9 @@ import { ValidationError } from '../utils/errors.mjs';
 import { formatDate } from '../utils/dateFormatter.mjs';
 
 export default class ImageService {
-    constructor({ imageRepository, mowSessionRepository }) {
+    constructor({ imageRepository, mowerRepository }) {
         this.imageRepository = imageRepository;
-        this.mowSessionRepository = mowSessionRepository
+        this.mowerRepository = mowerRepository
 
     }
 
