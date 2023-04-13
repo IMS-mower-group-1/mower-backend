@@ -2,68 +2,52 @@ import { ValidationError } from '../utils/errors.mjs';
 import { formatDate } from '../utils/dateFormatter.mjs';
 
 export default class ImageService {
-    constructor({ imageRepository }) {
+    constructor({ imageRepository, mowSessionRepository }) {
         this.imageRepository = imageRepository;
+        this.mowSessionRepository = mowSessionRepository
+
     }
 
-    uploadImageToStorage(mowerID, imageUInt8Array) {
-        return new Promise(async (resolve, reject) => {
-            const currentDate = new Date();
-            const formattedDateTime = formatDate(currentDate)
-            const imageFilename = `${mowerID}/${formattedDateTime}.jpg`;
-            try {
-                const fileName =
-                    await this.imageRepository.uploadImageToStorage(
-                        imageFilename,
-                        imageUInt8Array
-                    );
-                resolve(fileName);
-            } catch (e) {
-                reject(e);
-            }
-        });
+    async mowerExists(mowerId){
+        const mower = await this.mowerRepository.getMowerById(mowerId)
+        return mower == null ? false : true
     }
 
-    classifyImage(imageUInt8Array) {
-        return new Promise(async (resolve, reject) => {
-            const features = [
-                {
-                    type: "OBJECT_LOCALIZATION",
-                    maxResults: 1,
-                },
-            ];
+    async uploadImageToStorage(mowerID, imageUInt8Array) {
+        const currentDate = new Date();
+        const formattedDateTime = formatDate(currentDate);
+        const imageFilename = `${mowerID}/${formattedDateTime}.jpg`;
 
-            const request = {
-                image: {
-                    content: Buffer.from(imageUInt8Array).toString("base64"),
-                },
-                features: features,
-            };
+        const mowerExists = await this.mowerExists(mowerID)
+        if(mowerExists){
+            const fileName = await this.imageRepository.uploadImageToStorage(imageFilename, imageUInt8Array);
+            return fileName;
+        } else {
+            throw new ValidationError("The mower does not exist")
+        }
+    }
 
-            try {
-                const annotationResults =
-                    this.imageRepository.classifyImage(request);
-                resolve(annotationResults);
-            } catch (e) {
-                reject(e);
-            }
-        });
+    async classifyImage(imageUInt8Array) {
+        const features = [
+            {
+                type: "OBJECT_LOCALIZATION",
+                maxResults: 1,
+            },
+        ];
+    
+        const request = {
+            image: {
+                content: Buffer.from(imageUInt8Array).toString("base64"),
+            },
+            features: features,
+        };
+    
+
+        const annotationResults = await this.imageRepository.classifyImage(request);
+        return annotationResults;
     }
 
     async uploadAvoidedCollisionData(mowerID, mowSessionID, avoidedCollisionData) {
-        return new Promise(async (resolve, reject) => {
-            // Validation for avoidedCollisionData object
-
-            try {
-                await this.imageRepository.uploadAvoidedCollisionData(mowerID, mowSessionID, avoidedCollisionData);
-                resolve()
-            } catch(e) {
-                console.error("ERROR - Could not upload avoidedCollisionData for mowSessionID : " + mowSessionID)
-                reject(e)
-            }
-            
-        });
+        await this.imageRepository.uploadAvoidedCollisionData(mowerID, mowSessionID, avoidedCollisionData);
     }
-
-    //TODO: Add business-logic
 }
