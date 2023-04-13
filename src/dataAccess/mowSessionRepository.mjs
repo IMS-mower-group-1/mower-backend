@@ -5,53 +5,53 @@ export default class MowSessionRepository {
         this.db = db;
     }
 
-    async getAllSessionsByMowerId(mowerId) {
-        const sessionsCollectionRef = collection(this.db, `mowers/${mowerId}/mowSessions`);
-        const sessionsSnapshot = await getDocs(sessionsCollectionRef);
-        const sessions = [];
+    async getAllMowSessionsByMowerId(mowerId) {
+        const mowSessionsCollectionRef = collection(this.db, `mowers/${mowerId}/mowSessions`);
+        const mowSessionsSnapshot = await getDocs(mowSessionsCollectionRef);
+        const mowSessions = [];
 
-        sessionsSnapshot.forEach((sessionDoc) => {
-            sessions.push({
-                id: sessionDoc.id,
-                ...sessionDoc.data(),
+        mowSessionsSnapshot.forEach((mowSessionDoc) => {
+            mowSessions.push({
+                id: mowSessionDoc.id,
+                ...mowSessionDoc.data(),
             });
         });
 
-        return sessions;
+        return mowSessions;
     }
 
-    async getActiveSession(mowerId) {
-        const sessionsCollectionRef = collection(this.db, `mowers/${mowerId}/mowSessions`);
-        const activeSessionQuery = query(sessionsCollectionRef, where('end', '==', null));
-        const activeSessionSnapshot = await getDocs(activeSessionQuery);
+    async getActiveMowSession(mowerId) {
+        const MowSessionsCollectionRef = collection(this.db, `mowers/${mowerId}/mowSessions`);
+        const activeMowSessionQuery = query(MowSessionsCollectionRef, where('end', '==', null));
+        const activeMowSessionSnapshot = await getDocs(activeMowSessionQuery);
     
-        if (activeSessionSnapshot.empty) {
+        if (activeMowSessionSnapshot.empty) {
             return null;
         }
     
         return {
-            id: activeSessionSnapshot.docs[0].id,
-            ...activeSessionSnapshot.docs[0].data(),
+            id: activeMowSessionSnapshot.docs[0].id,
+            ...activeMowSessionSnapshot.docs[0].data(),
         };
     }
 
-    async startMowSessionByMowerId(mowerId, sessionData) {
+    async startMowSessionByMowerId(mowerId, mowSessionData) {
         // Get the specified mower document by its ID
         const mowerRef = doc(this.db, `mowers/${mowerId}`);
 
         // Add a new document to the nested sessions collection
-        const sessionsCollection = collection(mowerRef, 'mowSessions');
-        const newSessionRef = await addDoc(sessionsCollection, sessionData);
-        return newSessionRef.id;
+        const mowSessionsCollection = collection(mowerRef, 'mowSessions');
+        const newMowSessionRef = await addDoc(mowSessionsCollection, mowSessionData);
+        return newMowSessionRef.id;
     }
 
-    async endMowSession(mowerId, sessionId, endDate) {
-        const sessionDocRef = doc(this.db, `mowers/${mowerId}/mowSessions/${sessionId}`);
-        await updateDoc(sessionDocRef, { end: endDate });
+    async endMowSession(mowerId, mowSessionId, endDate) {
+        const mowSessionDocRef = doc(this.db, `mowers/${mowerId}/mowSessions/${mowSessionId}`);
+        await updateDoc(mowSessionDocRef, { end: endDate });
     }
 
-    async updateMowSessionPath(mowerId, sessionId, newPath) {
-        const sessionDocRef = doc(this.db, `mowers/${mowerId}/mowSessions/${sessionId}`);
-        await updateDoc(sessionDocRef, { path: newPath });
+    async updateMowSessionPath(mowerId, mowSessionId, newPath) {
+        const mowSessionDocRef = doc(this.db, `mowers/${mowerId}/mowSessions/${mowSessionId}`);
+        await updateDoc(mowSessionDocRef, { path: newPath });
     }
 }

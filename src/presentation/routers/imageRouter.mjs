@@ -9,7 +9,7 @@ export default function createImageRouter({ imageService, positionService }) {
 
     // Upload image
     // Find out how IMAGE can be sent from Mower to API?
-    router.post("/upload/:mowerID/:mowSessionID", async (req, res) => {
+    router.post("/upload/:mowerID/:mowSessionID", async (req, res, next) => {
         const uint8Array = new Uint8Array(req.body);
         const mowerID = req.params.mowerID;
         const mowSessionID = req.params.mowSessionID;
@@ -29,9 +29,8 @@ export default function createImageRouter({ imageService, positionService }) {
             await imageService.uploadAvoidedCollisionData(mowerID, mowSessionID, avoidedCollisionData)
 
             res.sendStatus(200);
-        } catch (e) {
-            console.error("ERROR - Collision avoidance image could not be uploaded...")
-            res.sendStatus(400);
+        } catch (error) {
+            next(error)
         }
     });
 

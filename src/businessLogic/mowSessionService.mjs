@@ -1,61 +1,87 @@
+import { ValidationError } from '../utils/errors.mjs';
+import { formatDate } from '../utils/dateFormatter.mjs';
+
 export default class MowSessionService{
-    constructor({mowSessionRepository}){
+    constructor({mowSessionRepository, mowerRepository}){
         this.mowSessionRepository = mowSessionRepository
+        this.mowerRepository = mowerRepository
     }
 
-    async getAllSessionsByMowerId(mowerId){
-        const mowSessions = await this.mowSessionRepository.getAllSessionsByMowerId(mowerId)
-        return mowSessions
-
+    async mowerExists(mowerId){
+        const mower = await this.mowerRepository.getMowerById(mowerId)
+        return mower == null ? false : true
     }
 
-    async getActiveSessionByMowerId(mowerId){
-        const activeMowSession = await this.mowSessionRepository.getActiveSession(mowerId)
-        return activeMowSession
+    async getAllMowSessionsByMowerId(mowerId){
+        const mowerExists = await this.mowerExists(mowerId)
+        if(mowerExists){
+            const mowSessions = await this.mowSessionRepository.getAllMowSessionsByMowerId(mowerId)
+            return mowSessions
+        } else {
+            throw new ValidationError("The mower does not exist")
+        }
+    }
 
+    async getActiveMowSessionByMowerId(mowerId){
+        const mowerExists = await this.mowerExists(mowerId)
+        if(mowerExists){
+            const activeMowSession = await this.mowSessionRepository.getActiveMowSession(mowerId)
+            return activeMowSession
+        } else {
+            throw new ValidationError("The mower does not exist")
+        }
     }
 
     async startMowSessionByMowerId(mowerId){
+        const activeMowSession = await this.mowSessionRepository.getActiveMowSession(mowerId)
+        const mowerExists = await this.mowerExists(mowerId)
+        if (!mowerExists) {
+            throw new ValidationError('The mower does not exist');
+        } else if (activeMowSession){
+            throw new ValidationError('Cannot start a new mow session when an active session exists.');
+        }
+
         const currentDate = new Date();
-        const formattedDate = currentDate.toISOString().slice(0, 10);
-        const sessionData = {
+        const formattedCurrentDate = formatDate(currentDate)
+        const mowSessionData = {
             path: [],
-            start: formattedDate,
+            start: formattedCurrentDate,
             end: null
         }
-        return await this.mowSessionRepository.startMowSessionByMowerId(mowerId, sessionData);
+        return await this.mowSessionRepository.startMowSessionByMowerId(mowerId, mowSessionData);
     }
 
     async endMowSessionByMowerId(mowerId) {
         const currentDate = new Date();
-        const formattedCurrentDate = currentDate.toISOString().slice(0, 10);
+        const formattedCurrentDate = formatDate(currentDate)
         
-        // Get the active mow-session
-        const activeMowSession = await this.mowSessionRepository.getActiveSession(mowerId);
-    
-        if (!activeMowSession) {
-            console.log("No active mowing session found.");
-            return;
+        const activeMowSession = await this.mowSessionRepository.getActiveMowSession(mowerId);
+        const mowerExists = await this.mowerExists(mowerId)
+        
+        if(!mowerExists){
+            throw new ValidationError('The mower does not exist');
         }
-    
+        else if (!activeMowSession) {
+            throw new ValidationError('Cannot end a mow session when there is no active session.');
+        }
         // Update the end field of the active session with currentDate
         await this.mowSessionRepository.endMowSession(mowerId, activeMowSession.id, formattedCurrentDate);
     }
 
     async updateMowSessionPath(mowerId, currentPosition) {
         // Get the active mow-session
-        const activeMowSession = await this.mowSessionRepository.getActiveSession(mowerId);
-    
-        if (!activeMowSession) {
-            console.log("No active mowing session found.");
-            return;
+        const activeMowSession = await this.mowSessionRepository.getActiveMowSession(mowerId);
+        const mowerExists = await this.mowerExists(mowerId)
+        if(!mowerExists){
+            throw new ValidationError('The mower does not exist');
+        }
+        else if (!activeMowSession) {
+            throw new ValidationError('Cannot update path when there is no active session');
         }
         // Append currentPosition to the path
         const newPath = activeMowSession.path ? [...activeMowSession.path, currentPosition] : [currentPosition];
     
         // Update the mow session path in the repository
         await this.mowSessionRepository.updateMowSessionPath(mowerId, activeMowSession.id, newPath);
-    }
-
-    //TODO: Add business-logic for mow sessions
+    }      
 }

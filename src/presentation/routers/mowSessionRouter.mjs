@@ -6,46 +6,45 @@ export default function createMowSessionRouter({mowSessionService}) {
 
 
     // Get all mow sessions for mower by mower-id
-    router.get("/mower/:id", async (req, res) => {
+    router.get("/mower/:id", async (req, res, next) => {
         const mowerId = req.params.id 
         try {
-            const sessions = await mowSessionService.getAllSessionsByMowerId(mowerId)
-            res.status(200).json(sessions)
+            const mowSessions = await mowSessionService.getAllMowSessionsByMowerId(mowerId)
+            res.status(200).json(mowSessions)
         } catch (error) {
-            res.status(500).json({ error: 'Internal server error' })
+            next(error)
         }
     });
 
     // Get active mow session by mower-id
-    router.get("/mower/:id/active", async (req, res) => {
+    router.get("/mower/:id/active", async (req, res, next) => {
         const mowerId = req.params.id 
         try {
-            const activeSession = await mowSessionService.getActiveSessionByMowerId(mowerId)
-            res.status(200).json(activeSession)
+            const activeMowSession = await mowSessionService.getActiveMowSessionByMowerId(mowerId)
+            res.status(200).json(activeMowSession)
         } catch (error) {
-            res.status(500).json({ error: 'Internal server error' })
+            next(error)
         }
     });
 
-    router.post("/start-session/:id", async (req, res) => {
+    router.post("/start-session/:id", async (req, res, next) => {
         const mowerId = req.params.id;
         try {
-            const sessionId = await mowSessionService.startMowSessionByMowerId(mowerId);
-            res.status(201).json({ message: 'Mowing session started successfully', sessionId });
+            const mowSessionId = await mowSessionService.startMowSessionByMowerId(mowerId);
+            res.status(201).json({ message: 'Mowing session started successfully', mowSessionId });
         } catch (error) {
-            res.status(500).json({ error: 'Internal server error' });
+            next(error)
         }
     });
 
-    router.post("/end-session/:id", async (req, res) => {
+    router.post("/end-session/:id", async (req, res, next) => {
         const mowerId = req.params.id
         try {
             await mowSessionService.endMowSessionByMowerId(mowerId)
             res.status(200).json({ message: 'Mowing session ended successfully' });
         } catch (error) {
-            res.status(500).json({ error: 'Internal server error' })
+            next(error)
         }
     });
-
     return router
 }

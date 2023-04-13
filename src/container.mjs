@@ -15,6 +15,8 @@ import imageRouter from './presentation/routers/imageRouter.mjs'
 import imageService from './businessLogic/imageService.mjs'
 import imageRepository from './dataAccess/imageRepository.mjs'
 
+import mowerRepository from './dataAccess/mowerRepository.mjs'
+
 const container = createContainer()
 
 
@@ -36,7 +38,8 @@ container.register({
     mowSessionRepository: asClass(mowSessionRepository),
 
     db: asValue(db),
-    imageAnnotatorClient: asValue(imageAnnotatorClient)
+    imageAnnotatorClient: asValue(imageAnnotatorClient),
+    mowerRepository: asClass(mowerRepository)
 })
 
 export default container;

@@ -1,27 +1,34 @@
+import { ValidationError } from '../utils/errors.mjs';
+
 export default class PositionService{
-    constructor({positionRepository, mowSessionService}){
+    constructor({positionRepository, mowerRepository, mowSessionService}){
         this.positionRepository = positionRepository
+        this.mowerRepository = mowerRepository
         this.mowSessionService = mowSessionService
     }
 
-    async getCoordinates(mowerID) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const coordinates = this.positionRepository.getCoordinates(mowerID)
-                resolve(coordinates)
-            } catch (e) {
-                console.error("ERROR Service - Could not fetch coordinates for mower with id : " + mowerID)
-                reject(e)
-            }
-        })
+    async mowerExists(mowerId){
+        const mower = await this.mowerRepository.getMowerById(mowerId)
+        return mower == null ? false : true
     }
 
+    async getCoordinates(mowerId) {
+        const mowerExists = await this.mowerExists(mowerId)
+        if(!mowerExists){
+            throw new ValidationError("The mower does not exist")
+        } 
+        return await this.positionRepository.getCoordinates(mowerId)
+    }
+  
     async updatePosition(mowerId, position){
-        // Updates Mowing session path
-        await this.mowSessionService.updateMowSessionPath(mowerId, position)
-
-        // TODO: Update mower position
-        await this.positionRepository.updateCoordinates(mowerId, position)
-
+        const mowerExists = await this.mowerExists(mowerId)
+        if(mowerExists){
+            // Updates Mowing session path
+            await this.mowSessionService.updateMowSessionPath(mowerId, position)
+            //Updates Mower position
+            await this.positionRepository.updateCoordinates(mowerId, position)
+        } else {
+            throw new ValidationError("The mower does not exist")
+        }
     }
 }
