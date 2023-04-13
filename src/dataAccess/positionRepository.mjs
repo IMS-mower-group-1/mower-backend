@@ -1,4 +1,4 @@
-import { getDoc, doc, updateDoc } from "firebase/firestore";
+import { updateDoc, getDoc, doc } from "firebase/firestore";
 
 export default class PositionRepository{
     constructor({ db }){
@@ -6,6 +6,7 @@ export default class PositionRepository{
     }
 
     async getCoordinates(mowerID) {
+
         const mowerDocRef = doc(this.db, `mowers/${mowerID}`)
         const mowerDocSnap = await getDoc(mowerDocRef)
         return(mowerDocSnap.data().position)

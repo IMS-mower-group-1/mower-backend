@@ -19,7 +19,7 @@ export default class PositionService{
         } 
         return await this.positionRepository.getCoordinates(mowerId)
     }
-
+  
     async updatePosition(mowerId, position){
         const mowerExists = await this.mowerExists(mowerId)
         if(mowerExists){

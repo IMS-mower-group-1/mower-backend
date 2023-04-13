@@ -19,9 +19,9 @@ export default function createPositionRouter({positionService}) {
     // Update position
     router.post("/update/:id", async(req, res, next) => {
         const mowerId = req.params.id
-        const currentPostition = req.body.position 
+        const currentPosition = req.body.position
         try {
-            await positionService.updatePosition(mowerId, currentPostition)
+            await positionService.updatePosition(mowerId, currentPosition)
             res.status(200).json({ message: "Position updated & added to the mowing session path" });
         } catch (error) {
             next(error)
