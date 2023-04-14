@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const imageAnnotatorClient = new ImageAnnotatorClient({
-    keyFilename: __dirname + "/../config/tgin13-22678df230b0.json",
+    keyFilename: __dirname + "/../config/tgin13-5fb20b297444.json",
 });
 
 export default imageAnnotatorClient;
