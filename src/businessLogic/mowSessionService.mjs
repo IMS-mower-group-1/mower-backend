@@ -1,5 +1,5 @@
 import { ValidationError } from '../utils/errors.mjs';
-import { formatDate } from '../utils/dateFormatter.mjs';
+import dateHandler from '../utils/dateHandler.mjs';
 
 export default class MowSessionService{
     constructor({mowSessionRepository, mowerRepository}){
@@ -41,19 +41,17 @@ export default class MowSessionService{
             throw new ValidationError('Cannot start a new mow session when an active session exists.');
         }
 
-        const currentDate = new Date();
-        const formattedCurrentDate = formatDate(currentDate)
+        const firestoreCurrentDate = dateHandler.getCurrentTimeFirestore()
         const mowSessionData = {
             path: [],
-            start: formattedCurrentDate,
+            start: firestoreCurrentDate,
             end: null
         }
         return await this.mowSessionRepository.startMowSessionByMowerId(mowerId, mowSessionData);
     }
 
     async endMowSessionByMowerId(mowerId) {
-        const currentDate = new Date();
-        const formattedCurrentDate = formatDate(currentDate)
+        const firestoreCurrentDate = dateHandler.getCurrentTimeFirestore()
         
         const activeMowSession = await this.mowSessionRepository.getActiveMowSession(mowerId);
         const mowerExists = await this.mowerExists(mowerId)
@@ -65,7 +63,7 @@ export default class MowSessionService{
             throw new ValidationError('Cannot end a mow session when there is no active session.');
         }
         // Update the end field of the active session with currentDate
-        await this.mowSessionRepository.endMowSession(mowerId, activeMowSession.id, formattedCurrentDate);
+        await this.mowSessionRepository.endMowSession(mowerId, activeMowSession.id, firestoreCurrentDate);
     }
 
     async updateMowSessionPath(mowerId, currentPosition) {

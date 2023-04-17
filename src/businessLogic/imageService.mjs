@@ -1,11 +1,10 @@
 import { ValidationError } from '../utils/errors.mjs';
-import { formatDate } from '../utils/dateFormatter.mjs';
+import dateHandler from '../utils/dateHandler.mjs';
 
 export default class ImageService {
     constructor({ imageRepository, mowerRepository }) {
         this.imageRepository = imageRepository;
         this.mowerRepository = mowerRepository
-
     }
 
     async mowerExists(mowerId){
@@ -14,8 +13,7 @@ export default class ImageService {
     }
 
     async uploadImageToStorage(mowerID, imageUInt8Array) {
-        const currentDate = new Date();
-        const formattedDateTime = formatDate(currentDate);
+        const formattedDateTime = dateHandler.formatDate()
         const imageFilename = `${mowerID}/${formattedDateTime}.jpg`;
 
         const mowerExists = await this.mowerExists(mowerID)
