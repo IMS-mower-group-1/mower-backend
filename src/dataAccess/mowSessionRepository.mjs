@@ -8,15 +8,29 @@ export default class MowSessionRepository {
     async getAllMowSessionsByMowerId(mowerId) {
         const mowSessionsCollectionRef = collection(this.db, `mowers/${mowerId}/mowSessions`);
         const mowSessionsSnapshot = await getDocs(mowSessionsCollectionRef);
+    
         const mowSessions = [];
-
-        mowSessionsSnapshot.forEach((mowSessionDoc) => {
-            mowSessions.push({
+    
+        for (const mowSessionDoc of mowSessionsSnapshot.docs) {
+            const avoidedCollisionsCollectionRef = collection(this.db, `mowers/${mowerId}/mowSessions/${mowSessionDoc.id}/avoidedCollisions`);
+            const avoidedCollisionsSnapshot = await getDocs(avoidedCollisionsCollectionRef);
+    
+            const mowSessionData = {
                 id: mowSessionDoc.id,
                 ...mowSessionDoc.data(),
+                avoidedCollisions: []
+            };
+    
+            avoidedCollisionsSnapshot.forEach((avoidedCollisionDoc) => {
+                mowSessionData.avoidedCollisions.push({
+                    id: avoidedCollisionDoc.id,
+                    ...avoidedCollisionDoc.data()
+                })
             });
-        });
-
+    
+            mowSessions.push(mowSessionData);
+        }
+    
         return mowSessions;
     }
 
