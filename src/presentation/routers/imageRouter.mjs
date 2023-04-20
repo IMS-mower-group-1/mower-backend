@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 
-export default function createImageRouter({ imageService, positionService }) {
+export default function createImageRouter({ imageService, positionService, mowSessionService }) {
     const router = express.Router();
     router.use(
         bodyParser.raw({ type: "application/octet-stream", limit: "10mb" })
@@ -9,15 +9,17 @@ export default function createImageRouter({ imageService, positionService }) {
 
     // Upload image
     // Find out how IMAGE can be sent from Mower to API?
-    router.post("/upload/:mowerID/:mowSessionID", async (req, res) => {
+    router.post("/upload/:mowerID", async (req, res) => {
         const uint8Array = new Uint8Array(req.body);
         const mowerID = req.params.mowerID;
-        const mowSessionID = req.params.mowSessionID;
+        console.log(`POST Upload route!`);
 
         try {
             const currentMowerPosition = await positionService.getCoordinates(mowerID);
             const imageFilename = await imageService.uploadImageToStorage(mowerID, uint8Array);
             const imageAnnotations = await imageService.classifyImage(uint8Array);
+            const mowSessionID = await mowSessionService.getActiveMowSessionByMowerId(mowerID)
+            console.log(mowSessionID.id);
 
             const avoidedCollisionData = {
                 accuracy: imageAnnotations[0].score,
@@ -26,7 +28,7 @@ export default function createImageRouter({ imageService, positionService }) {
                 position: currentMowerPosition
             }
 
-            await imageService.uploadAvoidedCollisionData(mowerID, mowSessionID, avoidedCollisionData)
+            await imageService.uploadAvoidedCollisionData(mowerID, mowSessionID.id, avoidedCollisionData)
 
             res.sendStatus(200);
         } catch (error) {
@@ -36,9 +38,7 @@ export default function createImageRouter({ imageService, positionService }) {
 
     // Get image url
     router.get("/getImageURL/:sessionId/:imageName", async (req, res) => {
-        console.log(`Get on getImageURL`);
         const imagePath = `${req.params.sessionId}/${req.params.imageName}`
-        console.log(`ImagePath: ${imagePath}`);
         const imageURL = await imageService.getCollisionImageDownloadURL(imagePath)
         res.json({
             imageURL : imageURL 
