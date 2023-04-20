@@ -40,12 +40,14 @@ export default class ImageService {
             features: features,
         };
     
-
-        const annotationResults = await this.imageRepository.classifyImage(request);
-        return annotationResults;
+        return await this.imageRepository.classifyImage(request);
     }
 
     async uploadAvoidedCollisionData(mowerID, mowSessionID, avoidedCollisionData) {
-        await this.imageRepository.uploadAvoidedCollisionData(mowerID, mowSessionID, avoidedCollisionData);
+        this.imageRepository.uploadAvoidedCollisionData(mowerID, mowSessionID, avoidedCollisionData);
+    }
+
+    async getCollisionImageDownloadURL(imagePath) {
+        return await this.imageRepository.getCollisionImageDownloadURL(imagePath)
     }
 }

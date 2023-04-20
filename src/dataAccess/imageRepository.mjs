@@ -1,4 +1,4 @@
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { addDoc, doc, getDoc, collection } from "firebase/firestore"; 
 
 export default class ImageRepository {
@@ -28,6 +28,12 @@ export default class ImageRepository {
     
         // 3. Add document to avoidedCollisions!
         await addDoc(avoidedCollisionRef, avoidedCollisionData);
+    }
+
+    async getCollisionImageDownloadURL(imagePath) {
+        const storage = getStorage()
+        const imageRef = ref(storage, imagePath)
+        return await getDownloadURL(imageRef)
     }
 
     //TODO: Add data-access functions

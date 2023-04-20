@@ -2,6 +2,7 @@ import express from 'express'
 import errorHandler from '../utils/errorHandler.mjs';
 
 const expressApp = express()
+
 expressApp.use(express.json());
 
 export default function ({
