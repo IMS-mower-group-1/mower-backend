@@ -37,8 +37,8 @@ export default function createImageRouter({ imageService, positionService, mowSe
     });
 
     // Get image url
-    router.get("/getImageURL/:sessionId/:imageName", async (req, res) => {
-        const imagePath = `${req.params.sessionId}/${req.params.imageName}`
+    router.get("/getImageURL/:mowerID/:imageName", async (req, res) => {
+        const imagePath = `${req.params.mowerID}/${req.params.imageName}`
         const imageURL = await imageService.getCollisionImageDownloadURL(imagePath)
         res.json({
             imageURL : imageURL 
