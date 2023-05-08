@@ -1,3 +1,4 @@
 .space
 node_modules
 config
+*.code-workspace

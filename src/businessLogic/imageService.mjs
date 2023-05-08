@@ -48,6 +48,12 @@ export default class ImageService {
     }
 
     async getCollisionImageDownloadURL(imagePath) {
-        return await this.imageRepository.getCollisionImageDownloadURL(imagePath)
+        try {
+            return await this.imageRepository.getCollisionImageDownloadURL(imagePath)
+        } catch(error) {
+            if (error.code === 'storage/object-not-found') {
+                throw new ValidationError("Image does not exist!")
+            }
+        }
     }
 }
