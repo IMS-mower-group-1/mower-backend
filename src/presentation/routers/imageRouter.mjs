@@ -9,7 +9,7 @@ export default function createImageRouter({ imageService, positionService, mowSe
 
     // Upload image
     // Find out how IMAGE can be sent from Mower to API?
-    router.post("/upload/:mowerID", async (req, res) => {
+    router.post("/upload/:mowerID", async (req, res, next) => {
         const uint8Array = new Uint8Array(req.body);
         const mowerID = req.params.mowerID;
         console.log(`POST Upload route!`);
@@ -32,17 +32,22 @@ export default function createImageRouter({ imageService, positionService, mowSe
 
             res.sendStatus(200);
         } catch (error) {
-            console.error("Could not upload image...")
+            next(error)
         }
     });
 
     // Get image url
-    router.get("/getImageURL/:mowerID/:imageName", async (req, res) => {
-        const imagePath = `${req.params.mowerID}/${req.params.imageName}`
-        const imageURL = await imageService.getCollisionImageDownloadURL(imagePath)
-        res.json({
-            imageURL : imageURL 
-        }).send(200);
+    router.get("/getImageURL/:mowerID/:imageName", async (req, res, next) => {
+        try {
+            const imagePath = `${req.params.mowerID}/${req.params.imageName}`
+            const imageURL = await imageService.getCollisionImageDownloadURL(imagePath)
+            res.status(200).json({
+                imageURL : imageURL 
+            });
+        } catch (error) {
+            next(error)
+        }
+
     });
 
     return router;
