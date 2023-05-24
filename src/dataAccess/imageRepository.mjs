@@ -28,8 +28,6 @@ export default class ImageRepository {
     
         // 3. Add document to avoidedCollisions!
         await addDoc(avoidedCollisionRef, avoidedCollisionData);
-
-        return 200
     }
 
     async getCollisionImageDownloadURL(imagePath) {
