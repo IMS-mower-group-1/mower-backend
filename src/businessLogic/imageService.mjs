@@ -47,7 +47,6 @@ export default class ImageService {
         try {
             return await this.imageRepository.uploadAvoidedCollisionData(mowerID, mowSessionID, avoidedCollisionData);
         } catch (error) {
-            console.log(error)
             throw new ValidationError("Could not upload avoidedCollision data.")
         }
         

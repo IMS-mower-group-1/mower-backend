@@ -12,7 +12,6 @@ export default function createImageRouter({ imageService, positionService, mowSe
     router.post("/upload/:mowerID", async (req, res, next) => {
         const uint8Array = new Uint8Array(req.body);
         const mowerID = req.params.mowerID;
-        console.log(`POST Upload route!`);
 
         try {
             const currentMowerPosition = await positionService.getCoordinates(mowerID);
