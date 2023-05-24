@@ -20,14 +20,16 @@ export default class ImageRepository {
     }
     
     async uploadAvoidedCollisionData(mowerID, mowSessionID, avoidedCollisionData) {
-        // 2. Fetch mowSession document reference using mowerID & mowSessionID
+        // 1. Create mowSession document reference using mowerID & mowSessionID
         const mowSessionDocRef = doc(this.db, `mowers/${mowerID}/mowSessions/${mowSessionID}`)
     
-        // // 3. Fetch Reference to avoidedCollisions collections
+        // 2. Create Reference to avoidedCollisions collections
         const avoidedCollisionRef = collection(mowSessionDocRef, "avoidedCollisions")
     
         // 3. Add document to avoidedCollisions!
         await addDoc(avoidedCollisionRef, avoidedCollisionData);
+
+        return 200
     }
 
     async getCollisionImageDownloadURL(imagePath) {

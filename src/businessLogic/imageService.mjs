@@ -44,7 +44,12 @@ export default class ImageService {
     }
 
     async uploadAvoidedCollisionData(mowerID, mowSessionID, avoidedCollisionData) {
-        this.imageRepository.uploadAvoidedCollisionData(mowerID, mowSessionID, avoidedCollisionData);
+        try {
+            return await this.imageRepository.uploadAvoidedCollisionData(mowerID, mowSessionID, avoidedCollisionData);
+        } catch (error) {
+            throw new ValidationError("Could not upload avoidedCollision data.")
+        }
+        
     }
 
     async getCollisionImageDownloadURL(imagePath) {

@@ -28,7 +28,10 @@ export default function createImageRouter({ imageService, positionService, mowSe
                 position: currentMowerPosition
             }
 
-            await imageService.uploadAvoidedCollisionData(mowerID, mowSessionID.id, avoidedCollisionData)
+            const uploadDataResult = await imageService.uploadAvoidedCollisionData(mowerID, mowSessionID.id, avoidedCollisionData)
+            if (uploadDataResult !== 200) {
+                throw new Error("Could not upload avoidedCollisionData...")
+            } 
 
             res.sendStatus(200);
         } catch (error) {
