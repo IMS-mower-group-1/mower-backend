@@ -27,7 +27,7 @@ export default class ImageRepository {
         const avoidedCollisionRef = collection(mowSessionDocRef, "avoidedCollisions")
     
         // 3. Add document to avoidedCollisions!
-        await addDoc(avoidedCollisionRef, avoidedCollisionData);
+        return await addDoc(avoidedCollisionRef, avoidedCollisionData);
     }
 
     async getCollisionImageDownloadURL(imagePath) {
